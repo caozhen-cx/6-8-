@@ -1,0 +1,11 @@
+.index_headers {
+    height: 1rem;
+    width: 100vw;
+    background-color: #363D40;
+    font-size: 0.4rem;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 0.2rem;
+}

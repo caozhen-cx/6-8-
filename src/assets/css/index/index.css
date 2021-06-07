@@ -1,0 +1,26 @@
+.index_content {
+    display: flex;
+    height: calc(100vh - 1.4rem);
+}
+
+.index_left {
+    width: 15vw;
+}
+
+.index_left,
+.index_left>div,
+.index_left>div>ul {
+    height: 100%;
+}
+
+.index_right {
+    width: 85vw;
+    height: 105%;
+    padding: 0.2rem;
+    background: #E9EDF1;
+}
+
+.el-menu-vertical-demo:not(.el-menu--collapse) {
+    width: 100%;
+    min-height: 100%;
+}
