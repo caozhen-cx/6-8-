@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import {
     Input, Button, Menu, MenuItem, MenuItemGroup, Submenu, Breadcrumb, BreadcrumbItem, Table, TableColumn, Switch,
-    Pagination,Dialog,Form,FormItem,Message,Popconfirm  ,Row,Col
+    Pagination,Dialog,Form,FormItem,Message,Popconfirm  ,Row,Col,Select,Option,Tag ,Tooltip,Tree 
 } from "element-ui";
 Vue.use(Input)
 Vue.use(Form);
@@ -36,4 +36,12 @@ Vue.use(Col);
 // 
 
 
-
+Vue.use(Select);
+Vue.use(Option);
+// 下拉菜单
+Vue.use(Tag);
+// 标签
+Vue.use(Tooltip);
+// 文字提示
+Vue.use(Tree);
+// 树形结构

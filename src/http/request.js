@@ -3,8 +3,9 @@ import axios from "axios";
 import store from "@/store/index.js";
 // 引入vuex
 import qs from "qs";
-
-
+// 引入qs
+import Router from "../router";
+// 引入路由
 import { Loading, Message } from 'element-ui';
 // 引入element-ui的loading动画
 import { baseURL } from "@/config/index.js";
@@ -44,6 +45,7 @@ instance.interceptors.response.use(response => { // response 服务器返回的�
     // 成功回调
     loading.close();
     // 关闭loading
+
     return response;
     // 必须返回有返回值
 }, error => {
@@ -52,6 +54,7 @@ instance.interceptors.response.use(response => { // response 服务器返回的�
     // 必须有返回值
 })
 // 响应拦截
+
 
 export default (url, method, params = {}, data = {}) => {
     // url请求地址
@@ -65,24 +68,65 @@ export default (url, method, params = {}, data = {}) => {
         params,
         data: qs.stringify(data)
     }).then(res => {
+        let msg = res.data.meta.msg;
+        if (res.data.meta.msg === "无效token" && res.data.meta.status === 400) {
+            Message({
+                message: msg,
+                type: "error"
+            });
+            Router.push("/login")
+            return { data: []};
+        }
+        if (method !== "get" && method) {
+
+            switch (res.data.meta.status) {
+                case 200:
+                    // 请求成功
+                    Message({
+                        message: msg,
+                        type: "success"
+                    });
+                    break
+                case 201:
+                    // 创建成功
+                    Message({
+                        message: msg,
+                        type: "success"
+                    });
+                    break;
+                case 204:
+                    // 删除成功
+                    Message({
+                        message: msg,
+                        type: "success"
+                    });
+                    break;
+                case 400:
+                    // 参数错误
+                    Message({
+                        message: msg,
+                        type: "error"
+                    });
+                    break;
+                case 404:
+                    // 参数错误
+                    Message({
+                        message: msg,
+                        type: "error"
+                    });
+                    break;
+                case 500:
+                    // 服务器内部错误
+                    Message({
+                        message: msg,
+                        type: "error"
+                    });
+                    break;
+            }
+        }
         // res 我们后端返回的数据
         if (res.status >= 200 && res.status < 300) {
             // 如果我们返回的数据状态码为200-300之间就是成功
-            let msg = res.data.meta.msg;
-            if (res.data.meta.status === 400) {
-                // 参数错误
-                Message({
-                    message: msg,
-                    type: "error"
-                })
-            }
-            if (method !== "get" && res.data.meta.status !== 400) {
-                // 请求成功且操作成功
-                Message({
-                    message: msg,
-                    type: "success"
-                })
-            }
             return res;
         } else {
             return Promise.reject(res.data);
@@ -93,4 +137,3 @@ export default (url, method, params = {}, data = {}) => {
         // 请求失败返回一个Promise对象
     })
 }
-

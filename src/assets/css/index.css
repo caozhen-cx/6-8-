@@ -5,5 +5,10 @@
     text-decoration: none;
 }
 div {
-    font-size: 0.20rem;
+    font-size: 0.16rem;
+}
+.el-table__row td:last-child .cell {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
 }

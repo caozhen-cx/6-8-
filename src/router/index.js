@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router';
 import store from "@/store/index.js";
-import indexRouter from "@/views/index/userlist/router/indexRouter.js";
+import indexRouter from "@/views/index/router/indexRouter.js";
 // 主页路由
 
 import { Message } from 'element-ui';

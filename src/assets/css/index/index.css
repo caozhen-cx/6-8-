@@ -5,6 +5,7 @@
 
 .index_left {
     width: 15vw;
+    max-width: 300px;
 }
 
 .index_left,
@@ -18,6 +19,8 @@
     height: 105%;
     padding: 0.2rem;
     background: #E9EDF1;
+    overflow: scroll;
+    min-width: 1200px;
 }
 
 .el-menu-vertical-demo:not(.el-menu--collapse) {

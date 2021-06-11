@@ -8,101 +8,67 @@
       active-text-color="#ffd04b"
       router
       :collapse="isCollapse"
+      unique-opened
+      :default-active="$store.state.indexNav"
     >
-      <!-- 用户管理 -->
-      <el-submenu index="/">
-        <template slot="title">
-          <i class="iconfont icon-user"></i>
-          <span>用户管理</span>
-        </template>
-        <el-menu-item-group>
-          <el-menu-item index="/user">
-            <template slot="title">
-              <i class="el-icon-menu"></i>
-              <span>用户管理</span>
-            </template>
-          </el-menu-item>
-        </el-menu-item-group>
-      </el-submenu>
-      <!-- 用户管理 -->
-
-      <!-- 权限管理 -->
-      <el-submenu index="2">
-        <template slot="title">
-          <i class="iconfont icon-tijikongjian"></i>
-          <span>权限管理</span>
-        </template>
-        <el-menu-item-group>
-          <el-menu-item index="2-1">
-            <template slot="title">
-              <i class="el-icon-menu"></i>
-              <span>用户管理</span>
-            </template>
-          </el-menu-item>
-        </el-menu-item-group>
-      </el-submenu>
-      <!-- 权限管理 -->
-
-      <!-- 商品管理 -->
-      <el-submenu index="3">
-        <template slot="title">
-          <i class="iconfont icon-shangpin"></i>
-          <span>商品管理</span>
-        </template>
-        <el-menu-item-group>
-          <el-menu-item index="3-1">
-            <template slot="title">
-              <i class="el-icon-menu"></i>
-              <span>用户管理</span>
-            </template>
-          </el-menu-item>
-        </el-menu-item-group>
-      </el-submenu>
-      <!-- 商品管理 -->
-
-      <!-- 订单管理 -->
-      <el-submenu index="4">
-        <template slot="title">
-          <i class="iconfont icon-danju"></i>
-          <span>订单管理</span>
-        </template>
-        <el-menu-item-group>
-          <el-menu-item index="4-1">
-            <template slot="title">
-              <i class="el-icon-menu"></i>
-              <span>用户管理</span>
-            </template>
-          </el-menu-item>
-        </el-menu-item-group>
-      </el-submenu>
-      <!-- 订单管理 -->
-
-      <!-- 数据统计 -->
-      <el-submenu index="5">
-        <template slot="title">
-          <i class="iconfont icon-baobiao"></i>
-          <span>数据统计</span>
-        </template>
-        <el-menu-item-group>
-          <el-menu-item index="5-1">
-            <template slot="title">
-              <i class="el-icon-menu"></i>
-              <span>用户管理</span>
-            </template>
-          </el-menu-item>
-        </el-menu-item-group>
-      </el-submenu>
-      <!-- 数据统计 -->
+       <el-submenu
+        :index="'/' + item.path"
+        v-for="(item, index) in list"
+        :key="item.id"
+      >
+                <template slot="title">
+                    <i :class="['iconfont', navIcon[index]]"></i>
+                    <span>{{ item.authName }}</span>         </template
+        >
+                <el-menu-item-group>
+                    <el-menu-item
+            :index="'/' + val.path"
+            v-for="val in item.children"
+            :key="val.id"
+            @click="tab(val.path)"
+          >
+                        <template slot="title">
+                            <i class="el-icon-menu"></i>               <span>{{
+                val.authName
+              }}</span>
+                          </template
+            >
+                      </el-menu-item
+          >
+                  </el-menu-item-group
+        >
+              </el-submenu
+      >
     </el-menu>
   </div>
 </template>
 
 <script>
+import { getNav } from "@/http/api";
 export default {
   data() {
     return {
       isCollapse: false,
+      list: [],
+      // 导航数据
+      navIcon: [
+        "icon-user",
+        "icon-tijikongjian",
+        "icon-shangpin",
+        "icon-danju",
+        "icon-baobiao",
+      ],
     };
+  },
+  mounted() {
+    getNav().then((res) => {
+        this.list = res.data ;
+    });
+  },
+  methods: {
+    tab(path) {
+      this.$store.commit("indexNavTab", path);
+    },
   },
 };
 </script>

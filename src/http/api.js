@@ -1,6 +1,5 @@
 import http from "./request";
 // 封装的axios
-import { Message } from 'element-ui';
 
 async function getLogin(data) {
     let res = await http("login", "post", data);
@@ -12,7 +11,13 @@ async function getUsers(data) {
     return res.data
 };
 // 用户数据列表
+async function getNav (){
+    let res = await http("menus","get");
+    return res.data;
+}
+// 左侧导航数据
 export {
     getLogin,
-    getUsers
+    getUsers,
+    getNav
 }

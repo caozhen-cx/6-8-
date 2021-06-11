@@ -19,6 +19,7 @@
             <el-input
               v-model="loginUser.username"
               autocomplete="off"
+              placeholder="请输入用户名"
             ></el-input>
           </el-form-item>
           <el-form-item
@@ -29,6 +30,9 @@
             <el-input
               v-model="loginUser.password"
               autocomplete="off"
+              type="password"
+              show-password
+              placeholder="请输入密码"
             ></el-input>
           </el-form-item>
           <el-form-item>
@@ -50,22 +54,19 @@ export default {
       this.$refs["loginUser"].validate((val) => {
         if (!val) return false;
         // 用户和密码不能为空
-        getLogin( this.loginUser ).then(
-          (res) => {
-            if (res.meta.status === 200) {
-              // 登录成功状态码
-              this.$store.commit("login", res.data.token);
-              this.reset();
-              this.$router.push("/");
-            }
+        getLogin(this.loginUser).then((res) => {
+          if (res.meta.status === 200) {
+            // 登录成功状态码
+            this.$store.commit("login", res.data.token);
+            this.$router.push("/");
+            this.reset();
           }
-        );
+        });
       });
     },
     // 登录
     reset() {
-      this.loginUser.username = "";
-      this.loginUser.password = "";
+      return this.$refs["loginUser"].resetFields();
     },
     // 重置
   },

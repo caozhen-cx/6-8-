@@ -13,7 +13,10 @@ import './assets/css/index.css';
 import "./assets/css/icon/fonts/iconfont.css";
 // 字体图标
 Vue.config.productionTip = false
-
+import MyBreadcrumb from "@/components/userList/Breadcrumb.vue";
+Vue.component("MyBreadcrumb",MyBreadcrumb)
+// 面包屑
+import "@/assets/css/userlist/userlist.css";
 
 new Vue({
   router,
