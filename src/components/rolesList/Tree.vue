@@ -1,5 +1,10 @@
 <template>
-  <el-dialog title="分配权限" :visible.sync="flag" :before-close="cancel">
+  <el-dialog
+    title="分配权限"
+    :visible.sync="flag"
+    :before-close="cancel"
+    @closed="closed"
+  >
     <!-- 树形结构 -->
     <el-tree
       :data="treeList"
@@ -50,6 +55,10 @@ export default {
       this.$emit("modify", this.$refs.tree.getCheckedKeys());
     },
     // 点击确定
+    closed() {
+      this.$refs.tree.setCheckedKeys([]);
+      this.$emit("closed");
+    },
   },
   data() {
     return {

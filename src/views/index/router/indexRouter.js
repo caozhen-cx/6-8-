@@ -29,8 +29,12 @@ export default [
         // 商品管理
         ...orders,
         // 订单列表
-        ...reports
+        ...reports,
             // 数据报表
+            {
+            path: "/goods/adds",
+            compoennt: () => import('../commodity/Adds.vue')
+        }
 
         ]
     }

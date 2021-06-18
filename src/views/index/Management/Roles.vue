@@ -25,7 +25,7 @@
             >
               <!-- 第一列 -->
               <el-col :span="5">
-                <el-tag closable>
+                <el-tag closable @close="removeRolesId(scope.row, item)">
                   {{ item.authName }}
                 </el-tag>
                 <i class="el-icon-caret-right"></i>
@@ -36,7 +36,12 @@
                 <el-row v-for="val in item.children" :key="val.id">
                   <!-- 第二列 -->
                   <el-col :span="6">
-                    <el-tag closable type="success" class="tog_one">
+                    <el-tag
+                      closable
+                      type="success"
+                      class="tog_one"
+                      @close="removeRolesId(scope.row, val)"
+                    >
                       {{ val.authName }}
                     </el-tag>
                     <i class="el-icon-caret-right"></i>
@@ -46,6 +51,7 @@
                   <!-- 第三列 -->
                   <el-col :span="18">
                     <el-tag
+                      @close="removeRolesId(scope.row, item1)"
                       class="tag_two"
                       type="warning"
                       closable
@@ -115,10 +121,7 @@
               size="mini"
               type="warning"
               icon="el-icon-setting"
-              @click="
-                treeFlag = true;
-                jurisdictionId = scope.row.id;
-              "
+              @click="clickTree(scope.row)"
               >分配权限</el-button
             >
           </template>
@@ -126,6 +129,33 @@
         <!-- 第五列 -->
       </el-table>
       <!-- 列表 -->
+
+      <!-- 分配权限弹框 -->
+      <el-dialog
+        title="分配权限"
+        :visible.sync="treeFlag"
+        @closed="closed"
+        @opened="opened"
+      >
+        <!-- 树形结构 -->
+        <el-tree
+          :data="treeList"
+          show-checkbox
+          default-expand-all
+          node-key="id"
+          ref="tree"
+          highlight-current
+          :props="defaultProps"
+        >
+        </el-tree>
+        <!-- 树形结构 -->
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="treeFlag = false">取 消</el-button>
+          <el-button type="primary" @click="determine">确 定</el-button>
+        </span>
+      </el-dialog>
+      <!-- 分配权限弹框 -->
+
       <!-- 分页器 -->
       <div class="block">
         <el-pagination
@@ -139,13 +169,6 @@
       </div>
       <!-- 分页器 -->
     </div>
-    <myTree
-      :treeList="treeList"
-      @cancel="treeFlag = false"
-      :flag="treeFlag"
-      @modify="determine"
-      :arrCheckId="arrCheckId"
-    />
   </div>
 </template>
 
@@ -156,6 +179,7 @@ import {
   getRoles,
   getRights,
   getModifyRole,
+  getRemoveRolesId,
 } from "@/http/jurisdictionList/jurisdictionApi.js";
 import addButton from "@/components/rolesList/AddRole";
 import modify from "@/components/rolesList/Edit";
@@ -188,62 +212,51 @@ export default {
       jurisdictionId: "",
       // 权限id
       arrCheckId: [],
+      // 选中权限的id
+      defaultProps: {
+        children: "children",
+        label: "authName",
+      },
+      item: {},
     };
   },
   mounted() {
     this.getData();
     getRights("tree").then((res) => {
-      // console.log(res);
       this.treeList = res.data;
     });
   },
   methods: {
+    closed() {
+      this.arrCheckId = [];
+      this.$refs.tree.setCheckedKeys([]);
+    },
+    // 关闭分配权限弹窗触发
     getData() {
       getRole().then((res) => {
-        let children = res.data.map((item) => {
-          return item.children;
-        });
-        console.log(res.data);
-        this.arrFlat(children);
         this.list = res.data;
         this.total = this.list.length;
       });
     },
     // 请求数据
+    clickTree(item) {
+      this.treeFlag = true;
+      this.jurisdictionId = item.id;
+      this.item = item;
+    },
+    // 点击分配权限
+    opened() {
+      this.arrFlat(this.item);
+      this.$refs.tree.setCheckedKeys(this.arrCheckId);
+    },
+    // 弹框节点出现回调
     arrFlat(arr) {
-      console.log(arr);
-      if (!Array.isArray(arr)) return arr;
-      let arr1 = arr.flat();
-      // console.log(arr1);
-      let arr2 = [];
-      arr1.forEach((item) => {
-        // arrId.push(item)
-        for (let key in item) {
-          if (Array.isArray(item[key])) {
-            arr2.push(...item[key]);
-          }
-          if (key == "id") {
-            arr2.push(item[key]);
-          }
-        }
+      if (!arr.children) {
+        return this.arrCheckId.push(arr.id);
+      }
+      arr.children.forEach((item) => {
+        this.arrFlat(item);
       });
-      let arr3 = [];
-      arr2.forEach((item) => {
-        let i = "";
-        if (typeof item === "number") {
-          i = item;
-        } else if (typeof item == "object") {
-          for (let key in item) {
-            if (Array.isArray(item[key])) {
-
-            }
-          }
-          i = item.id;
-        }
-        arr3.push(i);
-      });
-      console.log(arr3);
-      this.arrCheckId = arr3;
     },
     // 提取数组中所有id
     del(id) {
@@ -272,8 +285,12 @@ export default {
       });
     },
     // 确定修改
-    determine(val) {
-      let str = val.join(",");
+    determine() {
+      let key = [
+        ...this.$refs.tree.getCheckedKeys(),
+        ...this.$refs.tree.getHalfCheckedKeys(),
+      ];
+      let str = key.join(",");
       getModifyRole(this.jurisdictionId, { rids: str }).then((res) => {
         this.getData();
       });
@@ -281,6 +298,31 @@ export default {
       this.treeFlag = false;
     },
     // 分配权限
+    async removeRolesId(row, item) {
+      let flag = await this.$confirm(
+        "此操作将永久删除该文件, 是否继续?",
+        "提示",
+        {
+          confirmButtonText: "删除",
+          cancelButtonText: "取消",
+          type: "warning",
+        }
+      ).catch(() => {});
+      // confirm是Promise对象，使用async catch不加会报错
+      if (!flag) {
+        return this.$message({
+          type: "info",
+          message: "已取消删除",
+        });
+      }
+      // 如果每页有返回值就提示取消
+
+      getRemoveRolesId(row.id, item.id).then((res) => {
+        row.children = res.data;
+      });
+      // 删除接口
+    },
+    // 删除权限
   },
   computed: {
     listRoles(data) {

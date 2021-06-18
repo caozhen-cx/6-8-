@@ -22,9 +22,14 @@ export default new Vuex.Store({
     },
     // 退出登录
     indexNavTab(state, path) {
-      state.indexNav = "/" + path;
-    }
+      console.log(path);
+      state.indexNav = path;
+    },
     // 切换侧导航
+    reset(state) {
+      state.indexNav = "/";
+    }
+    // 重新进入页面
   },
   actions: {
   },

@@ -26,10 +26,10 @@ const routes = [
 ]
 
 const router = new VueRouter({
-  mode: "history",
   routes
 })
 router.beforeEach((to, from, next) => {
+  store.commit("indexNavTab",to.fullPath)
   if (to.name === "Login") {
     next();
   } else {

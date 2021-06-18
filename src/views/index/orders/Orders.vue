@@ -30,16 +30,21 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
+            <!-- 设置 -->
             <el-button
               size="mini"
               icon="el-icon-edit"
               type="primary"
             ></el-button>
+            <!-- 设置 -->
+            <!-- 物流状态 -->
             <el-button
               size="mini"
               icon="el-icon-location"
               type="success"
+              @click="kuaidi(scope.row.order_id)"
             ></el-button>
+            <!-- 物流状态 -->
           </template>
         </el-table-column>
       </el-table>
@@ -54,6 +59,22 @@
       >
       </el-pagination>
     </div>
+
+    <!-- 物流信息 -->
+
+    <el-dialog title="物流信息" :visible.sync="dialogVisible" width="50%">
+      <span>
+        <el-timeline>
+          <el-timeline-item
+            v-for="(activity, index) in kuaidiData"
+            :key="index"
+            :timestamp="activity.time"
+          >
+            {{ activity.context }}
+          </el-timeline-item>
+        </el-timeline>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -95,6 +116,13 @@ export default {
       this.listParameter.query = val;
       this.getData();
     },
+    kuaidi(id) {
+      this.$axios.get("/kuaidi/" + id).then((res) => {
+        console.log(res);
+        this.kuaidiData = res.data.data;
+        this.dialogVisible = true;
+      });
+    },
   },
   data() {
     return {
@@ -108,11 +136,13 @@ export default {
       // 数据
       total: 0,
       // 总页数
+      kuaidiData: [],
+      // 物流信息数据
+      dialogVisible: false,
+      // 物流信息弹窗
     };
   },
-  watch:{
-
-  },
+  watch: {},
   mounted() {
     this.getData();
   },

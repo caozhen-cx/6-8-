@@ -19,7 +19,7 @@
     height: 105%;
     padding: 0.2rem;
     background: #E9EDF1;
-    overflow: scroll;
+    overflow-y: auto;
     min-width: 1200px;
 }
 

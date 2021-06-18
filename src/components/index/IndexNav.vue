@@ -25,7 +25,6 @@
             :index="'/' + val.path"
             v-for="val in item.children"
             :key="val.id"
-            @click="tab(val.path)"
           >
                         <template slot="title">
                             <i class="el-icon-menu"></i>               <span>{{
@@ -67,7 +66,7 @@ export default {
   },
   methods: {
     tab(path) {
-      this.$store.commit("indexNavTab", path);
+      // this.$store.commit("indexNavTab", path);
     },
   },
 };

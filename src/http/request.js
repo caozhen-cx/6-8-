@@ -22,12 +22,12 @@ let loading;
 // 用于保存loading
 instance.interceptors.request.use(config => { // config 就是我们一些请求的配置
     // 成功回调
-    loading = Loading.service({
-        background: "rgba(0, 0, 0, 0.7)",
-        lock: true,
-        text: "加载中",
-        spinner: "el-icon-loading",
-    });
+    // loading = Loading.service({
+    //     background: "rgba(0, 0, 0, 0.7)",
+    //     lock: true,
+    //     text: "加载中",
+    //     spinner: "el-icon-loading",
+    // });
     // 引入element-ui loading 动画
     if (store.state.token) {
         // vuex中的token是否是空，如果不为空就设置请求头，携带token
@@ -43,7 +43,7 @@ instance.interceptors.request.use(config => { // config 就是我们一些请求
 
 instance.interceptors.response.use(response => { // response 服务器返回的数据
     // 成功回调
-    loading.close();
+    // loading.close();
     // 关闭loading
 
     return response;
